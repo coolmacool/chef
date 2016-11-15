@@ -81,7 +81,7 @@ describe Chef::Application::ExitCode do
       " exit codes that should be used with Chef.  Chef::Application::ExitCode defines valid exit codes"  \
       " In a future release, non-standard exit codes will be redefined as" \
       " GENERIC_FAILURE unless `exit_status` is set to `:disabled` in your client.rb."
-      expect(Chef).to receive(:log_deprecation).with(warn)
+      expect(Chef).to receive(:deprecated).with(:exit_code, warn)
       expect(exit_codes.normalize_exit_code(151)).to eq(151)
     end
 
@@ -122,7 +122,7 @@ describe Chef::Application::ExitCode do
       " exit codes that should be used with Chef.  Chef::Application::ExitCode defines valid exit codes"  \
       " In a future release, non-standard exit codes will be redefined as" \
       " GENERIC_FAILURE unless `exit_status` is set to `:disabled` in your client.rb."
-      expect(Chef).not_to receive(:log_deprecation).with(warn)
+      expect(Chef).not_to receive(:deprecated).with(:exit_code, warn)
       expect(exit_codes.normalize_exit_code(151)).to eq(151)
     end
 
@@ -167,7 +167,7 @@ describe Chef::Application::ExitCode do
       " exit codes that should be used with Chef.  Chef::Application::ExitCode defines valid exit codes"  \
       " In a future release, non-standard exit codes will be redefined as" \
       " GENERIC_FAILURE unless `exit_status` is set to `:disabled` in your client.rb."
-      expect(Chef).to receive(:log_deprecation).with(warn)
+      expect(Chef).to receive(:deprecated).with(:exit_code, warn)
       expect(exit_codes.normalize_exit_code(151)).to eq(1)
     end
 

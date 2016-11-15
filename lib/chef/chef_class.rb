@@ -196,49 +196,36 @@ class Chef
     end
 
     #
-    # Emit a pre-canned deprecation warning.
+    # Emit a deprecation message.
     #
-    # @param type     The deprecation.
+    # @param type The message to send. This should be a symbol, referring to
+    #   a class defined in Chef::Deprecated
+    # @param message  An explicit message to display, rather than the generic one
+    #   associated with the deprecation.
     # @param location The location. Defaults to the caller who called you (since
     #   generally the person who triggered the check is the one that needs to be
     #   fixed).
-    # @param message  An explicit message to display, rather than the generic one
-    #   associated with the deprecation.
     #
     # @example
     #     Chef.deprecated(:my_deprecation, message: "This is deprecated!")
-    def deprecated(type, location: nil, message: nil)
-      location ||= Chef::Log.caller_location
-      output = Chef::Deprecated.create(type, message)
-      if run_context && run_context.events
-        run_context.events.deprecation(output, location)
-      else
-        Chef::Log.deprecation(output, location)
-      end
-    end
-
-    #
-    # Emit a deprecation message.
-    #
-    # @param message The message to send.
-    # @param location The location. Defaults to the caller who called you (since
-    #   generally the person who triggered the check is the one that needs to be
-    #   fixed).
-    #
-    # @example
-    #     Chef.log_deprecation("Deprecated!")
     #
     # @api private this will likely be removed in favor of an as-yet unwritten
     #      `Chef.log`
-    def log_deprecation(message, location = nil)
+    def deprecated(type, message, location = nil)
       location ||= Chef::Log.caller_location
+      deprecation = Chef::Deprecated.create(type, message, location)
       # `run_context.events` is the primary deprecation target if we're in a
       # run. If we are not yet in a run, print to `Chef::Log`.
       if run_context && run_context.events
-        run_context.events.deprecation(message, location)
+        run_context.events.deprecation(deprecation, location)
       else
-        Chef::Log.deprecation(message, location)
+        Chef::Log.deprecation(deprecation, location)
       end
+    end
+
+    def log_deprecation(message, location = nil)
+      location ||= Chef::Log.caller_location
+      Chef.deprecated(:generic, message, location)
     end
   end
 
